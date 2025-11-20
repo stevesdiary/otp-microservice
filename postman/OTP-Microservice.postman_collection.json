@@ -1,0 +1,705 @@
+{
+  "info": {
+    "name": "OTP Microservice API",
+    "_postman_id": "otp-microservice-v1",
+    "description": "Complete API collection for OTP Microservice - Generate, verify, and manage one-time passwords via Email and SMS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "value",
+        "value": "{{CLIENT_SECRET}}",
+        "type": "string"
+      },
+      {
+        "key": "key",
+        "value": "x-client-secret",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "CLIENT_SECRET",
+      "value": "your-client-secret-key",
+      "type": "string"
+    },
+    {
+      "key": "VERIFICATION_ID",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Checks",
+      "item": [
+        {
+          "name": "Basic Health Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/health",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "health"
+              ]
+            },
+            "description": "Basic health check to verify the service is running. Returns status, timestamp, uptime, and environment."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/health",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "health"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"OK\",\n  \"timestamp\": \"2025-11-20T17:21:25.000Z\",\n  \"uptime\": 123.456,\n  \"environment\": \"development\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Detailed Health Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/health/detailed",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "health",
+                "detailed"
+              ]
+            },
+            "description": "Detailed health check including MongoDB and Redis connection status, memory usage, and service dependencies."
+          },
+          "response": [
+            {
+              "name": "All Services Healthy",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/health/detailed",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "health",
+                    "detailed"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"OK\",\n  \"timestamp\": \"2025-11-20T17:21:25.000Z\",\n  \"uptime\": 123.456,\n  \"environment\": \"development\",\n  \"services\": {\n    \"mongodb\": \"connected\",\n    \"redis\": \"connected\"\n  },\n  \"memory\": {\n    \"rss\": \"45MB\",\n    \"heapTotal\": \"20MB\",\n    \"heapUsed\": \"15MB\"\n  }\n}"
+            },
+            {
+              "name": "Service Degraded",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/health/detailed",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "health",
+                    "detailed"
+                  ]
+                }
+              },
+              "status": "Service Unavailable",
+              "code": 503,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"DEGRADED\",\n  \"timestamp\": \"2025-11-20T17:21:25.000Z\",\n  \"uptime\": 123.456,\n  \"environment\": \"development\",\n  \"services\": {\n    \"mongodb\": \"connected\",\n    \"redis\": \"disconnected\"\n  },\n  \"memory\": {\n    \"rss\": \"45MB\",\n    \"heapTotal\": \"20MB\",\n    \"heapUsed\": \"15MB\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Readiness Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/health/ready",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "health",
+                "ready"
+              ]
+            },
+            "description": "Kubernetes readiness probe - checks if the service is ready to accept traffic."
+          },
+          "response": []
+        },
+        {
+          "name": "Liveness Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/health/live",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "health",
+                "live"
+              ]
+            },
+            "description": "Kubernetes liveness probe - checks if the application is alive and running."
+          },
+          "response": []
+        }
+      ],
+      "description": "Health check endpoints for monitoring service status and dependencies"
+    },
+    {
+      "name": "OTP Operations",
+      "item": [
+        {
+          "name": "Generate Email OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.verificationId) {",
+                  "        pm.collectionVariables.set('VERIFICATION_ID', jsonData.data.verificationId);",
+                  "        console.log('Verification ID saved:', jsonData.data.verificationId);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"user@example.com\",\n  \"type\": \"email\",\n  \"subject\": \"Your Verification Code\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/otp/generate",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "otp",
+                "generate"
+              ]
+            },
+            "description": "Generate and send OTP via email. The verification ID is automatically saved to collection variables for use in verify endpoint."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-client-secret",
+                    "value": "{{CLIENT_SECRET}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"recipient\": \"user@example.com\",\n  \"type\": \"email\",\n  \"subject\": \"Your Verification Code\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/otp/generate",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "otp",
+                    "generate"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"OTP sent successfully\",\n  \"data\": {\n    \"verificationId\": \"507f1f77bcf86cd799439011\",\n    \"expiresAt\": \"2025-11-20T17:26:25.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Generate SMS OTP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "    const jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.verificationId) {",
+                  "        pm.collectionVariables.set('VERIFICATION_ID', jsonData.data.verificationId);",
+                  "        console.log('Verification ID saved:', jsonData.data.verificationId);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"+1234567890\",\n  \"type\": \"sms\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/otp/generate",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "otp",
+                "generate"
+              ]
+            },
+            "description": "Generate and send OTP via SMS. The verification ID is automatically saved to collection variables for use in verify endpoint."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-client-secret",
+                    "value": "{{CLIENT_SECRET}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"recipient\": \"+1234567890\",\n  \"type\": \"sms\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/otp/generate",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "otp",
+                    "generate"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"OTP sent successfully\",\n  \"data\": {\n    \"verificationId\": \"507f1f77bcf86cd799439011\",\n    \"expiresAt\": \"2025-11-20T17:26:25.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verificationId\": \"{{VERIFICATION_ID}}\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/otp/verify",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "otp",
+                "verify"
+              ]
+            },
+            "description": "Verify the OTP code. Uses the VERIFICATION_ID from the generate endpoint automatically."
+          },
+          "response": [
+            {
+              "name": "Success - Valid OTP",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-client-secret",
+                    "value": "{{CLIENT_SECRET}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"verificationId\": \"507f1f77bcf86cd799439011\",\n  \"otp\": \"123456\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/otp/verify",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "otp",
+                    "verify"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"OTP verified successfully\",\n  \"data\": {\n    \"verified\": true\n  }\n}"
+            },
+            {
+              "name": "Error - Invalid OTP",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-client-secret",
+                    "value": "{{CLIENT_SECRET}}"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"verificationId\": \"507f1f77bcf86cd799439011\",\n  \"otp\": \"999999\"\n}"
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/otp/verify",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "otp",
+                    "verify"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"message\": \"Invalid or expired OTP\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get OTP Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/otp/status/{{VERIFICATION_ID}}",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "otp",
+                "status",
+                "{{VERIFICATION_ID}}"
+              ]
+            },
+            "description": "Get the current status of an OTP verification. Useful for debugging and monitoring."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "x-client-secret",
+                    "value": "{{CLIENT_SECRET}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/api/v1/otp/status/507f1f77bcf86cd799439011",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "otp",
+                    "status",
+                    "507f1f77bcf86cd799439011"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"verificationId\": \"507f1f77bcf86cd799439011\",\n    \"recipient\": \"user@example.com\",\n    \"type\": \"email\",\n    \"verified\": false,\n    \"attempts\": 1,\n    \"expiresAt\": \"2025-11-20T17:26:25.000Z\",\n    \"createdAt\": \"2025-11-20T17:21:25.000Z\"\n  }\n}"
+            }
+          ]
+        }
+      ],
+      "description": "OTP generation, verification, and status endpoints",
+      "auth": {
+        "type": "apikey",
+        "apikey": [
+          {
+            "key": "value",
+            "value": "{{CLIENT_SECRET}}",
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "value": "x-client-secret",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Error Examples",
+      "item": [
+        {
+          "name": "Missing Client Secret",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"user@example.com\",\n  \"type\": \"email\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/otp/generate",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "otp",
+                "generate"
+              ]
+            },
+            "description": "Example of missing authentication header error"
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Email Format",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"invalid-email\",\n  \"type\": \"email\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/otp/generate",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "otp",
+                "generate"
+              ]
+            },
+            "description": "Example of validation error for invalid email format"
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid OTP Format",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"verificationId\": \"507f1f77bcf86cd799439011\",\n  \"otp\": \"abc123\"\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/api/v1/otp/verify",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "otp",
+                "verify"
+              ]
+            },
+            "description": "Example of validation error - OTP must contain only numbers"
+          },
+          "response": []
+        }
+      ],
+      "description": "Examples of common error scenarios and validation failures"
+    }
+  ]
+}
