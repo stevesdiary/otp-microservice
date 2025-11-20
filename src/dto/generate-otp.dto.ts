@@ -23,7 +23,7 @@ export class GenerateOTPDto {
 
   // Note: Phone validation is basic, can be enhanced with specific formats
   @ValidateIf((o) => o.type === 'sms')
-  @IsString()
+  @IsPhoneNumber()
   get phoneValidation(): string | undefined {
     return this.type === 'sms' ? this.recipient : undefined;
   }

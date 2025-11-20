@@ -7,7 +7,7 @@ import { ValidationError } from '../utils/app-error.util';
  * Generic validation middleware factory
  */
 export function validateDto<T extends object>(dtoClass: new () => T) {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, _res: Response, next: NextFunction) => {
     try {
       // Transform plain object to class instance
       const dtoInstance = plainToClass(dtoClass, req.body);

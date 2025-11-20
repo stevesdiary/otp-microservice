@@ -12,7 +12,7 @@ router.use(`${API_VERSION}/otp`, otpRoutes);
 router.use(`${API_VERSION}/health`, healthRoutes);
 
 // Root endpoint
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
   res.json({
     service: 'OTP Microservice',
     version: '1.0.0',

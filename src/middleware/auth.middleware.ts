@@ -6,7 +6,7 @@ import logger from '../utils/logger.util';
 /**
  * Authenticate client using shared secret key
  */
-export function authenticateClient(req: Request, res: Response, next: NextFunction): void {
+export function authenticateClient(req: Request, _res: Response, next: NextFunction): void {
   try {
     const clientSecret = req.header('X-Client-Secret');
 

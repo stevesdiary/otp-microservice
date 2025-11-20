@@ -5,7 +5,7 @@ import emailService from './email.service';
 import smsService from './sms.service';
 import { generateOTP, generateVerificationId } from '../utils/otp-generator.util';
 import logger from '../utils/logger.util';
-import { BadRequestError, UnauthorizedError, InternalServerError } from '../utils/app-error.util';
+import { UnauthorizedError, InternalServerError } from '../utils/app-error.util';
 
 export class OTPService {
   /**

@@ -3,7 +3,7 @@ import otpService from '../services/otp.service';
 import { GenerateOTPDto } from '../dto/generate-otp.dto';
 import { VerifyOTPDto } from '../dto/verify-otp.dto';
 import { BadRequestError } from '../utils/app-error.util';
-import logger from '../utils/logger.util';
+
 
 export class OTPController {
   /**
