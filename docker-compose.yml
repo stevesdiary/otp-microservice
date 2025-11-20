@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # OTP Microservice
+  otp-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: otp-microservice
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/otp_service_db
+      - REDIS_URI=redis://redis:6379
+      - CLIENT_SECRET_KEY=dev-secret-key-change-in-production
+      - LOG_LEVEL=info
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - otp-network
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+
+  # MongoDB
+  mongo:
+    image: mongo:7.0
+    container_name: otp-mongodb
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_DATABASE=otp_service_db
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - otp-network
+    restart: unless-stopped
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis
+  redis:
+    image: redis:7.2-alpine
+    container_name: otp-redis
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - otp-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  otp-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+  redis-data:
